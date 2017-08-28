@@ -1,0 +1,27 @@
+---
+# tasks file for cifs-systemd-mounts
+- name: Setup systemd Service for mountpoints
+  template:
+    src: systemd_mount.j2
+    dest: "/etc/systemd/system/{{ item.dest[1:] | replace('/', '-') | trim }}.mount"
+  with_items: "{{ systemd_mounts }}"
+  notify: reload systemd
+
+- name: Setup systemd Service for automount
+  template:
+    src: systemd_automount.j2
+    dest: "/etc/systemd/system/{{ item.dest[1:] | replace('/', '-') | trim }}.automount"
+  with_items: "{{ systemd_mounts }}"
+  notify: reload systemd
+
+- name: Enable mounts
+  systemd:
+    name: "{{ item.dest[1:] | replace('/', '-')  | trim }}.mount"
+    enabled: True
+  with_items: "{{ systemd_mounts }}"
+
+- name: Enable automouts
+  systemd:
+    name: "{{ item.dest[1:] | replace('/', '-') | trim }}.automount"
+    enabled: True
+  with_items: "{{ systemd_mounts }}"

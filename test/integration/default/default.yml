@@ -1,0 +1,22 @@
+---
+# host to test against
+- hosts: test-kitchen
+  remote_user: root
+  roles:
+    # name of role to test
+    - role: ansible-systemd-mounts
+      systemd_mounts:
+        - src: //apps.local/app/folder1
+          dest: /opt/app/folder1
+          type: cifs
+          opts: uid=1100,gid=1100,cred=/etc/cifs-creds
+        - src: //apps.local/app/folder2
+          dest: /opt/app/folder2
+          type: cifs
+          opts: uid=1100,gid=1100,cred=/etc/cifs-creds
+        - src: "/opt/app/folder*"
+          dest: /opt/app/media
+          description: "mergerfs of folder1 and folder2"
+          requires: "opt-app-folder1.mount opt-app-folder2.mount"
+          type: fuse.mergerfs
+          opts: defaults,allow_other,direct_io,use_ino,minfreespace=50G,fsname=mergerfs

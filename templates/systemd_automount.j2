@@ -1,0 +1,18 @@
+[Unit]
+{% if item.description is defined %}
+Description={{ item.description }}
+{% else %}
+Description={{ item.src[1:] | replace('/', " ") | trim }}
+{% endif %}
+{% if item.requires is defined %}
+Requires={{ item.requires }}
+After=network.target multi-user.target {{ item.requires }}
+{% else %}
+After=network.target multi-user.target
+{% endif %}
+
+[Automount]
+Where={{ item.dest }}
+
+[Install]
+WantedBy=multi-user.target
