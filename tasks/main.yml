@@ -17,11 +17,13 @@
 - name: Enable mounts
   systemd:
     name: "{{ item.dest[1:] | replace('/', '-')  | trim }}.mount"
-    enabled: True
+    state: stopped
+    enabled: false
   with_items: "{{ systemd_mounts }}"
 
 - name: Enable automouts
   systemd:
     name: "{{ item.dest[1:] | replace('/', '-') | trim }}.automount"
-    enabled: True
+    state: started
+    enabled: true
   with_items: "{{ systemd_mounts }}"
